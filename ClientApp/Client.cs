@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 
 namespace ClientApp {
