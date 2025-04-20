@@ -8,22 +8,46 @@ namespace ServerAPP {
         int clientID;
 
         public ClientHandler(TcpClient client, int clientID) {
-            Console.WriteLine("client connected");
             this.client = client;
             this.clientID = clientID;
             this.stream = this.client.GetStream();
-            send($"Hello from Server, to client number {this.clientID}");
-            client.Close();
+
+            Console.WriteLine($"client {clientID} connected");
         }
 
-        private void send(string massage) {
-            byte[] buffer = Encoding.UTF8.GetBytes(massage);
-            stream.Write(buffer, 0, buffer.Length);
+        public async void handleClient() {
+            try {
+                await Send($"Hello from Server, to client number {clientID}");
 
+                while (client.Connected) {
+                    string? message = await Receive();
+                    if (message == null) break;
+                    Console.WriteLine($"Received from client {clientID}: {message}");
+                }
+            } catch (System.Exception e) {
+                Console.WriteLine($"Error with client {clientID}: {e}");
+            } finally {
+                client.Close();
+                Console.WriteLine($"client {clientID} disconnected");
+            }
+
+        }
+
+        private async Task Send(string massage) {
+            byte[] buffer = Encoding.UTF8.GetBytes(massage);
+            await stream.WriteAsync(buffer, 0, buffer.Length);
         }
         
-        private string receive() {
-            return "";
+        private async Task<string?> Receive() {
+            byte[] buffer = new byte[1024];
+            try {
+                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                if (bytesRead == 0) return null;
+                return Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            }
+            catch {
+                return null;
+            }
         }
     }
 }

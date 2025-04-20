@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace ServerAPP {
     class Server
@@ -10,8 +9,8 @@ namespace ServerAPP {
         List<ClientHandler> clientHandlers;
         int numberOfClients;
 
-        static void Main(string[] args) {
-            new Server();
+        static async Task Main(string[] args) {
+            await new Server().run();
         }
 
         public Server() {
@@ -21,14 +20,17 @@ namespace ServerAPP {
 
             server.Start();
             Console.WriteLine("Started the Server");
-            Run();
         }
 
-        private void Run() {
+        private async Task run() {
             while (true) {
-                ClientHandler client = new ClientHandler(server.AcceptTcpClient(), numberOfClients);
+                TcpClient client = await server.AcceptTcpClientAsync();
+                ClientHandler clientHandler = new ClientHandler(client, numberOfClients);
                 numberOfClients++;
-                clientHandlers.Append(client);
+                lock (clientHandlers) {
+                    clientHandlers.Append(clientHandler);
+                }
+                clientHandler.handleClient();
             }
         }
     }
