@@ -14,18 +14,18 @@ namespace ClientApp {
             AllocConsole();
             Console.WriteLine("Started A Client");
             try {
-                BuildClientGUI().StartWithClassicDesktopLifetime(args);
-            }
-            catch (Exception ex) {
+                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            } catch (Exception ex) {
                 Console.WriteLine($"Unhandled exception: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
             }
         }
 
-        public static AppBuilder BuildClientGUI()
-            => AppBuilder.Configure<App>()
+        public static AppBuilder BuildAvaloniaApp() {
+            return AppBuilder.Configure<App>()
                          .UsePlatformDetect()
                          .LogToTrace()
                          .UseReactiveUI();
+        }
     }
 }
