@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using Avalonia.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace ClientApp {
     public partial class MainWindow : Window {
@@ -11,6 +12,7 @@ namespace ClientApp {
 
         public MainWindow() {
             InitializeComponent();
+            MessageInput.Focus();
             _client = new TcpClient();
             _client.Connect("127.0.0.1", 5000);
             _stream = _client.GetStream();
@@ -18,7 +20,12 @@ namespace ClientApp {
         }
 
         private async void OnSendButtonClick(object sender, Avalonia.Interactivity.RoutedEventArgs e) {
-            string message = MessageBox.Text;
+            string message = MessageInput.Text;
+            if (message == null)
+            {
+                Console.WriteLine("Send: no massage found");
+                return;
+            }
             byte[] buffer = Encoding.UTF8.GetBytes(message);
             await _stream.WriteAsync(buffer, 0, buffer.Length);
         }
