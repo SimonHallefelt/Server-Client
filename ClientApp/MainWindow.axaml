@@ -6,44 +6,67 @@
 		MinWidth="200"
 		MinHeight="100"
 		Title="Client App">
-    <StackPanel>
-		<TextBlock Text="Client Chat"
-           FontSize="16"
-		   FontWeight="Bold"
-           Foreground="Black"
-           Background="Gray"
-           TextAlignment="Center"/>
-
 		<Grid>
+
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" MaxWidth="150" MinWidth="50" />
+				<ColumnDefinition Width="Auto" MaxWidth="150" MinWidth="100" />
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			
 			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
 				<RowDefinition Height="*"/>
+				<RowDefinition Height="50"/>
 			</Grid.RowDefinitions>
 
-			<StackPanel Grid.Column="0" Grid.Row="0" Background="LightBlue" VerticalAlignment="Stretch"> 
-				<!-- chats and user-->
+			<Border Grid.ColumnSpan="2" Background="Gray" Padding="5">
+				<TextBlock 
+					Text="Client Chat"
+					FontSize="16"
+					FontWeight="Bold"
+					TextAlignment="Center"
+					VerticalAlignment="Center"/>
+			</Border>
+
+			<StackPanel Grid.Column="0" Grid.Row="1" Background="LightBlue" VerticalAlignment="Stretch"> 
+				<!-- chats-->
+			</StackPanel>
+
+			<StackPanel Grid.Column="0" Grid.Row="2" Background="LightGray" VerticalAlignment="Stretch">
+				<!-- user -->
 			</StackPanel>
 			
 			
-			<StackPanel Grid.Column="1" Grid.Row="0" Background="Aqua" VerticalAlignment="Stretch">
-				<!-- chat information -->
+			<StackPanel Grid.Column="1" Grid.Row="1" Background="Aqua" VerticalAlignment="Stretch">
+				<!-- chat history -->
 				<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10">
 					<TextBlock x:Name="ServerMessages" Margin="10" />
 				</Border>
 		
+			</StackPanel>
+
+			<StackPanel Grid.Column="1" Grid.Row="2" Background="Gray" VerticalAlignment="Stretch">
+				<!-- chat send -->
 				<StackPanel Orientation="Horizontal" >
-					<TextBox x:Name="MessageInput" Width="200" Margin="10,0,10,0" VerticalAlignment="Center" />
+					<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10" Background="LightGray" >
+						<TextBox x:Name="MessageInput"
+								 Width="300"
+								 MinHeight="14"
+								 Margin="10,5,10,5"
+								 VerticalAlignment="Center"
+								 AcceptsReturn="True"
+								 TextWrapping="Wrap"
+								 FontSize="14"
+								 IsEnabled="True"
+								 IsReadOnly="False"/>
+					</Border>
+					
 					<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10">
-						<Button Content="Send" Click="OnSendButtonClick" Width="100" Margin="10" />
+						<Button Content="Send" Click="OnSendButtonClick"  Margin="10,5" />
 					</Border>
 				</StackPanel>
 			</StackPanel>
-		</Grid>
 
-    </StackPanel>
+		</Grid>
 	
 </Window>
