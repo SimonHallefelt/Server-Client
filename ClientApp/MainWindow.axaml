@@ -1,19 +1,49 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="ClientApp.MainWindow"
-        Width="400" Height="300" Title="Client App">
+        Width="600" 
+		Height="300" 
+		MinWidth="200"
+		MinHeight="100"
+		Title="Client App">
     <StackPanel>
-        <TextBox x:Name="MessageBox" Width="300" Margin="10" />
+		<TextBlock Text="Client Chat"
+           FontSize="16"
+		   FontWeight="Bold"
+           Foreground="Black"
+           Background="Gray"
+           TextAlignment="Center"/>
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" MaxWidth="150" MinWidth="50" />
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Column="0" Grid.Row="0" Background="LightBlue" VerticalAlignment="Stretch"> 
+				<!-- chats and user-->
+			</StackPanel>
+			
+			
+			<StackPanel Grid.Column="1" Grid.Row="0" Background="Aqua" VerticalAlignment="Stretch">
+				<!-- chat information -->
+				<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10">
+					<TextBlock x:Name="ServerMessages" Margin="10" />
+				</Border>
 		
-		<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10">
-			<TextBlock x:Name="ServerMessages" Margin="10" />
-		</Border>
-		
-		<StackPanel Orientation="Horizontal">
-			<TextBox x:Name="MessageInput" Width="200" Margin="10,0,10,0" VerticalAlignment="Center" />
-			<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10">
-				<Button Content="Send" Click="OnSendButtonClick" Width="100" Margin="10" />
-			</Border>
-		</StackPanel>
+				<StackPanel Orientation="Horizontal" >
+					<TextBox x:Name="MessageInput" Width="200" Margin="10,0,10,0" VerticalAlignment="Center" />
+					<Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="10">
+						<Button Content="Send" Click="OnSendButtonClick" Width="100" Margin="10" />
+					</Border>
+				</StackPanel>
+			</StackPanel>
+		</Grid>
+
     </StackPanel>
+	
 </Window>
