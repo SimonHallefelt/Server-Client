@@ -23,6 +23,7 @@ namespace ServerAPP {
                     string? message = await Receive();
                     if (message == null) break;
                     Console.WriteLine($"Received from client {clientID}: {message}");
+                    Send(message);
                 }
             } catch (System.Exception e) {
                 Console.WriteLine($"Error with client {clientID}: {e}");

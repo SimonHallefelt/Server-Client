@@ -28,6 +28,7 @@ namespace ClientApp {
             }
             byte[] buffer = Encoding.UTF8.GetBytes(message);
             await _stream.WriteAsync(buffer, 0, buffer.Length);
+            MessageInput.Text = "";
         }
 
         private async Task ReceiveMessages() {
