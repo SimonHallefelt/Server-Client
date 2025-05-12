@@ -5,7 +5,7 @@ using System;
 
 namespace ClientApp {
     internal class API {
-        private int versionNumber;
+        private uint versionNumber;
         private TcpClient client;
         private NetworkStream stream;
 
@@ -17,8 +17,7 @@ namespace ClientApp {
         }
 
         public async void SendMessage(string message) {
-            if (message == null)
-            {
+            if (message == null) {
                 Console.WriteLine("Send: no massage found");
                 return;
             }
@@ -26,7 +25,13 @@ namespace ClientApp {
             await stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        public async Task<bool> AttemptLogin() {
+        public async Task<bool> AttemptLogin(string username, string password) {
+            if (username == null || password == null) {
+                Console.WriteLine("Send: no massage found");
+                return false;
+            }
+            byte[] buffer = Encoding.UTF8.GetBytes(username + "%%%%%" + password);
+            await stream.WriteAsync(buffer, 0, buffer.Length);
             return false;
         }
 

@@ -7,15 +7,11 @@ using System;
 
 namespace ClientApp {
     public partial class MainWindow : Window {
-        private NetworkStream _stream;
         private API api;
 
         public MainWindow() {
             InitializeComponent();
             MessageInput.Focus();
-            TcpClient client = new TcpClient();
-            client.Connect("127.0.0.1", 5000);
-            NetworkStream _stream = client.GetStream();
             api = new API();
             Task.Run(ReceiveMessages); // Start listening for server messages
         }
@@ -27,9 +23,9 @@ namespace ClientApp {
         }
 
         private async void OnLoginClick(object sender, Avalonia.Interactivity.RoutedEventArgs e) {
-            string userName = UserName.Text;
+            string username = Username.Text;
             string password = Password.Text;
-            await api.AttemptLogin();
+            await api.AttemptLogin(username, password);
         }
 
         private async Task ReceiveMessages() {
