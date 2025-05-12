@@ -31,6 +31,10 @@ namespace ClientApp {
             MessageInput.Text = "";
         }
 
+        private async void OnLoginClick(object sender, Avalonia.Interactivity.RoutedEventArgs e) {
+            string userName = UserName.Text;
+        }
+
         private async Task ReceiveMessages() {
             while (true) {
                 byte[] buffer = new byte[1024];
