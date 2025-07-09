@@ -27,7 +27,17 @@ namespace ClientApp {
 
         public async Task<bool> AttemptLogin(string username, string password) {
             if (username == null || password == null) {
-                Console.WriteLine("Send: no massage found");
+                Console.WriteLine("Send: no password or username found");
+                return false;
+            }
+            byte[] buffer = Encoding.UTF8.GetBytes(username + "%%%%%" + password);
+            await stream.WriteAsync(buffer, 0, buffer.Length);
+            return false;
+        }
+        
+        public async Task<bool> AttemptRegisterAccount(string username, string password) {
+            if (username == null || password == null) {
+                Console.WriteLine("Send: no password or username found");
                 return false;
             }
             byte[] buffer = Encoding.UTF8.GetBytes(username + "%%%%%" + password);
@@ -35,7 +45,8 @@ namespace ClientApp {
             return false;
         }
 
-        public async Task<string> GetMessage() {
+        public async Task<string> GetMessage()
+        {
             byte[] buffer = new byte[1024];
             int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
             if (bytesRead == 0) return null;

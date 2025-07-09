@@ -9,7 +9,7 @@
 <Grid>
 	
 	<Grid.ColumnDefinitions>
-		<ColumnDefinition Width="Auto" MaxWidth="150" MinWidth="100" />
+		<ColumnDefinition Width="Auto" MaxWidth="200" MinWidth="100" />
 		<ColumnDefinition Width="*"/>
 	</Grid.ColumnDefinitions>
 			
@@ -59,8 +59,9 @@
 
 			<TextBlock Grid.Column="0" Grid.Row="1" Text="Password:" VerticalAlignment="Center" Margin="5"/>
 			<TextBox x:Name="Password" Grid.Column="1" Grid.Row="1" MaxLength="5" VerticalAlignment="Center" Margin="5"/>
-		
-			<Button Grid.ColumnSpan="2" Grid.Row="2" Click="OnLoginClick" Content="Login" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
+
+			<Button Grid.Row="2"  Grid.Column="0" Click="OnLoginClick" Content="Login" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
+			<Button Grid.Row="2"  Grid.Column="1" Click="OnRegisterClick" Content="Register" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
 		</Grid>
 	</Grid>
 			

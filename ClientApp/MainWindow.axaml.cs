@@ -28,6 +28,13 @@ namespace ClientApp {
             await api.AttemptLogin(username, password);
         }
 
+        private async void OnRegisterClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            string username = Username.Text;
+            string password = Password.Text;
+            await api.AttemptRegisterAccount(username, password);
+        }
+
         private async Task ReceiveMessages() {
             while (true) {
                 string message = await api.GetMessage();
