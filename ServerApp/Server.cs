@@ -7,6 +7,7 @@ namespace ServerAPP {
     {
         TcpListener server;
         List<ClientHandler> clientHandlers;
+        MessageHandler messageHandler;
         int numberOfClients;
 
         static async Task Main(string[] args) {
@@ -17,6 +18,7 @@ namespace ServerAPP {
             server = new TcpListener(IPAddress.Any, 5000);
             numberOfClients = 0;
             clientHandlers = new List<ClientHandler>();
+            messageHandler = new MessageHandler();
 
             server.Start();
             Console.WriteLine("Started the Server");
@@ -25,12 +27,12 @@ namespace ServerAPP {
         private async Task run() {
             while (true) {
                 TcpClient client = await server.AcceptTcpClientAsync();
-                ClientHandler clientHandler = new ClientHandler(client, numberOfClients);
+                ClientHandler clientHandler = new ClientHandler(client, numberOfClients, messageHandler);
                 numberOfClients++;
                 lock (clientHandlers) {
                     clientHandlers.Append(clientHandler);
                 }
-                clientHandler.handleClient();
+                _ = Task.Run(() => clientHandler.handleClient());
             }
         }
     }

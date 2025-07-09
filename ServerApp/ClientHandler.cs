@@ -8,29 +8,34 @@ namespace ServerAPP {
         private uint versionNumber = 0;
         TcpClient client;
         NetworkStream stream;
+        MessageHandler messageHandler;
         int clientID;
         
 
-        public ClientHandler(TcpClient client, int clientID)
+        public ClientHandler(TcpClient client, int clientID, MessageHandler messageHandler)
         {
             this.client = client;
             this.clientID = clientID;
+            this.messageHandler = messageHandler;
             this.stream = this.client.GetStream();
 
             Console.WriteLine($"client {clientID} connected");
         }
 
-        public async void handleClient() {
+        public async Task handleClient() {
             try {
                 await Send($"Hello from Server, to client number {clientID}");
 
                 while (client.Connected) {
+                    Console.WriteLine($"Client {clientID} handled on thread {Thread.CurrentThread.ManagedThreadId}");
+
                     string? received = await Receive();
                     if (received == null) break;
                     Console.WriteLine($"Received from client {clientID}: {received}");
                     string[] data = received.Split(" ");
                     if (data.Length < 3) break;
                     uint messageVersionNumber = UInt32.Parse(data[0]);
+                    if (messageVersionNumber != versionNumber) break;
                     MesType messageType = Enum.Parse<MesType>(data[1]);
                     string messageContent = string.Join(" ", data[2..]);
                     await Send(messageContent);
