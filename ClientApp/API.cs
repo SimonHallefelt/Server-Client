@@ -21,8 +21,7 @@ namespace ClientApp {
                 Console.WriteLine("Send: no massage found");
                 return;
             }
-            byte[] buffer = Encoding.UTF8.GetBytes(message);
-            await stream.WriteAsync(buffer, 0, buffer.Length);
+            await SendToServer(message, messageType.sendMessage);
         }
 
         public async Task<bool> AttemptLogin(string username, string password) {
@@ -30,19 +29,34 @@ namespace ClientApp {
                 Console.WriteLine("Send: no password or username found");
                 return false;
             }
-            byte[] buffer = Encoding.UTF8.GetBytes(username + "%%%%%" + password);
-            await stream.WriteAsync(buffer, 0, buffer.Length);
-            return false;
+            if (username.Contains(" ") || password.Contains(" ")) {
+                Console.WriteLine("Send: password or username contained space");
+                return false;
+            }
+            string message = username + " " + password;
+            await SendToServer(message, messageType.attemptLogin);
+            return true;
         }
-        
+
         public async Task<bool> AttemptRegisterAccount(string username, string password) {
             if (username == null || password == null) {
                 Console.WriteLine("Send: no password or username found");
                 return false;
             }
-            byte[] buffer = Encoding.UTF8.GetBytes(username + "%%%%%" + password);
+            if (username.Contains(" ") || password.Contains(" ")) {
+                Console.WriteLine("Send: password or username contained space");
+                return false;
+            }
+            string message = username + " " + password;
+            await SendToServer(message, messageType.attemptRegisterAccount);
+            return true;
+        }
+
+        private async Task<bool> SendToServer(string message, messageType mt)
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes(versionNumber + " " + mt + " " + message);
             await stream.WriteAsync(buffer, 0, buffer.Length);
-            return false;
+            return true;
         }
 
         public async Task<string> GetMessage()
@@ -53,5 +67,12 @@ namespace ClientApp {
             return Encoding.UTF8.GetString(buffer, 0, bytesRead);
         }
 
+    }
+
+    enum messageType
+    {
+        sendMessage,
+        attemptLogin,
+        attemptRegisterAccount
     }
 }
