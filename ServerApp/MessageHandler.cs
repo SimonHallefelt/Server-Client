@@ -63,19 +63,28 @@ namespace ServerAPP
             return Task.FromResult((String.Join(" ", messageContent), false));
         }
 
-        private Task<(string, bool)> attemptLogin(uint clientID, string[] messageContent)
+        private async Task<(string, bool)> attemptLogin(uint clientID, string[] messageContent)
         {
             Console.WriteLine("function attemptLogin got: " + messageContent + " from client: " + clientID);
+            if (messageContent.Length < 2)
+            {
+                return ("missing username or password", false);
+            }
 
-            return Task.FromResult((String.Join(" ", messageContent), false));
+            (string, bool) response = await database.login(messageContent[0], messageContent[1]);
+            return response;
         }
 
         private async Task<(string, bool)> attemptRegisterAccount(uint clientID, string[] messageContent)
         {
             Console.WriteLine("function attemptRegisterAccount got: " + messageContent + " from client: " + clientID);
-            (string, bool) response = await database.registerAccount(messageContent[0], messageContent[1]);
+            if (messageContent.Length < 2)
+            {
+                return ("missing username or password", false);
+            }
 
-            return (String.Join(" ", messageContent), false);
+            (string, bool) response = await database.registerAccount(messageContent[0], messageContent[1]);
+            return response;
         }
     }
 

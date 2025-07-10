@@ -15,9 +15,16 @@ namespace ServerAPP
             this.chats = new ConcurrentDictionary<string, Message[]>();
         }
 
-        public Task<(string, bool)> registerAccount(string username, string password) {
+        public Task<(string, bool)> registerAccount(string username, string password)
+        {
             bool added = loginInfo.TryAdd(username, password);
             return Task.FromResult(added ? ("User registered", true) : ("Username already taken", false));
+        }
+
+        public Task<(string, bool)> login(string username, string password)
+        {
+            bool valid = loginInfo.TryGetValue(username, out var storedPassword) && storedPassword == password;
+            return Task.FromResult(valid ? ("Login successful", true) : ("Invalid username or password", false));
         }
 
     }
