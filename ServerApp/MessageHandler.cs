@@ -5,10 +5,11 @@ namespace ServerAPP
     class MessageHandler
     {
         private uint versionNumber = 0;
+        private Database database;
 
         public MessageHandler()
         {
-
+            this.database = new Database();
         }
 
         public async Task<string> handleMessage(uint clientID, string message)
@@ -69,11 +70,12 @@ namespace ServerAPP
             return Task.FromResult((String.Join(" ", messageContent), false));
         }
 
-        private Task<(string, bool)> attemptRegisterAccount(uint clientID, string[] messageContent)
+        private async Task<(string, bool)> attemptRegisterAccount(uint clientID, string[] messageContent)
         {
             Console.WriteLine("function attemptRegisterAccount got: " + messageContent + " from client: " + clientID);
+            (string, bool) response = await database.registerAccount(messageContent[0], messageContent[1]);
 
-            return Task.FromResult((String.Join(" ", messageContent), false));
+            return (String.Join(" ", messageContent), false);
         }
     }
 
