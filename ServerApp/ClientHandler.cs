@@ -1,18 +1,16 @@
 using System.Data.SqlTypes;
 using System.Net.Sockets;
 using System.Text;
-using MesType = SharedLib.SharedLibrary.MessageType;
 
 namespace ServerAPP {
     class ClientHandler {
-        private uint versionNumber = 0;
         TcpClient client;
         NetworkStream stream;
         MessageHandler messageHandler;
-        int clientID;
+        uint clientID;
         
 
-        public ClientHandler(TcpClient client, int clientID, MessageHandler messageHandler)
+        public ClientHandler(TcpClient client, uint clientID, MessageHandler messageHandler)
         {
             this.client = client;
             this.clientID = clientID;
@@ -32,13 +30,9 @@ namespace ServerAPP {
                     string? received = await Receive();
                     if (received == null) break;
                     Console.WriteLine($"Received from client {clientID}: {received}");
-                    string[] data = received.Split(" ");
-                    if (data.Length < 3) break;
-                    uint messageVersionNumber = UInt32.Parse(data[0]);
-                    if (messageVersionNumber != versionNumber) break;
-                    MesType messageType = Enum.Parse<MesType>(data[1]);
-                    string messageContent = string.Join(" ", data[2..]);
-                    await Send(messageContent);
+                    string? messageResponse = await messageHandler.handleMessage(clientID, received);
+                    if (messageResponse == null) break;
+                    await Send(messageResponse);
                 }
             } catch (System.Exception e) {
                 Console.WriteLine($"Error with client {clientID}: {e}");
