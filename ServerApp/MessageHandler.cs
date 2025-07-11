@@ -23,6 +23,7 @@ namespace ServerAPP
 
             (string, bool) response = await messageTypeSwitch(clientID, messageType, messageContent);
 
+            Console.WriteLine("message response: " + response + " to client: " + clientID);
             return response.Item1;
         }
 
