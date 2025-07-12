@@ -86,7 +86,7 @@ namespace ClientApp
 
         private async Task<bool> deliverMessage(string[] messageContent)
         {
-            await mainWindow.AddNewMessage(String.Join(" ", messageContent));
+            await mainWindow.addNewMessage(String.Join(" ", messageContent));
             return true;
         }
 
@@ -97,6 +97,10 @@ namespace ClientApp
 
         private async Task<bool> deliverRegisteredAccounts(string[] messageContent)
         {
+            foreach(string user in messageContent) {
+                await mainWindow.addNewUser(user);
+            }
+            
             return false;
         }
     }

@@ -38,8 +38,8 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ScrollViewer x:Name="userScroll" Grid.Row="0" Background="LightBlue" VerticalScrollBarVisibility="Auto">
-			<StackPanel x:Name="userContainer" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Stretch">
+		<ScrollViewer x:Name="UserScroll" Grid.Row="0" Background="LightBlue" VerticalScrollBarVisibility="Auto">
+			<StackPanel x:Name="UserContainer" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Stretch">
 				<!-- list all of the registerd users thatis not your self -->
 				
 			</StackPanel>

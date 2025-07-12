@@ -27,6 +27,13 @@ namespace ServerAPP
             return Task.FromResult(valid ? ("Login successful", true) : ("Invalid username or password", false));
         }
 
+        public Task<string[]> getAllOtherRegisteredAccounts(string account)
+        {
+            var allAccounts = loginInfo.Keys.ToList();
+            allAccounts.Remove(account);
+            return Task.FromResult(allAccounts.ToArray());
+        }
+
     }
     
     class Message
