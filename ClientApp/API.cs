@@ -60,12 +60,12 @@ namespace ClientApp {
             return true;
         }
 
-        public async Task<string> GetMessage()
+        public async Task<(uint, string)> GetMessage()
         {
             byte[] buffer = new byte[1024];
             int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-            if (bytesRead == 0) return null;
-            return Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            if (bytesRead == 0) return (versionNumber, null);
+            return (versionNumber, Encoding.UTF8.GetString(buffer, 0, bytesRead));
         }
 
     }

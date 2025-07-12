@@ -16,7 +16,7 @@ namespace ClientApp {
             InitializeComponent();
             MessageInput.Focus();
             api = new API();
-            Task.Run(ReceiveMessages); // Start listening for server messages
+            HandleReceivedMessages hrm = new HandleReceivedMessages(api, this); // handel all messages from server
         }
 
         private void OnSendButtonClick(object sender, Avalonia.Interactivity.RoutedEventArgs e) {
@@ -38,30 +38,29 @@ namespace ClientApp {
             await api.AttemptRegisterAccount(username, password);
         }
 
-        private async Task ReceiveMessages() {
-            while (true) {
-                string message = await api.GetMessage();
-                if (message == null) continue;
-                Dispatcher.UIThread.Post(() =>
+        public Task<bool> AddNewMessage(string message)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                var newMessage = new Border
                 {
-                    var newMessage = new Border
+                    BorderBrush = Brushes.Black,
+                    BorderThickness = new Thickness(2),
+                    CornerRadius = new CornerRadius(5),
+                    Margin = new Thickness(10),
+                    Child = new TextBlock
                     {
-                        BorderBrush = Brushes.Black,
-                        BorderThickness = new Thickness(2),
-                        CornerRadius = new CornerRadius(5),
+                        Text = message,
                         Margin = new Thickness(10),
-                        Child = new TextBlock { 
-                            Text = message,
-                            Margin = new Thickness(10),
-                            TextWrapping = TextWrapping.Wrap
-                        }
-                    };
+                        TextWrapping = TextWrapping.Wrap
+                    }
+                };
 
-                    MessageContainer.Children.Add(newMessage);
-                
-                    MessageScroll.ScrollToEnd();
-                }); // Update the UI whith a new message
-            }
+                MessageContainer.Children.Add(newMessage);
+
+                MessageScroll.ScrollToEnd();
+            }); // Update the UI whith a new message
+            return Task.FromResult(true);
         }
     }
 }
