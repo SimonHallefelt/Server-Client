@@ -1,4 +1,5 @@
-using MesType = SharedLib.SharedLibrary.MessageType;
+using CliMesType = SharedLib.SharedLibrary.ClientMessageType;
+using SerMesType = SharedLib.SharedLibrary.ServerMessageType;
 
 namespace ServerAPP
 {
@@ -14,35 +15,44 @@ namespace ServerAPP
 
         public async Task<string> handleMessage(uint clientID, string message)
         {
-            string[] data = message.Split(" ");
-            if (data.Length < 3) return "error, message data < 3";
-            uint messageVersionNumber = UInt32.Parse(data[0]);
-            if (messageVersionNumber != versionNumber) return "error, messageVersionNumber != versionNumber";
-            MesType messageType = Enum.Parse<MesType>(data[1]);
-            string[] messageContent = data[2..];
+            try
+            {
+                string[] data = message.Split(" ");
+                if (data.Length < 3) return "error, message data < 3";
+                uint messageVersionNumber = UInt32.Parse(data[0]);
+                if (messageVersionNumber != versionNumber) return "error, messageVersionNumber != versionNumber";
+                CliMesType messageType = Enum.Parse<CliMesType>(data[1]);
+                string[] messageContent = data[2..];
 
-            (string, bool) response = await messageTypeSwitch(clientID, messageType, messageContent);
+                (string, bool) response = await messageTypeSwitch(clientID, messageType, messageContent);
 
-            Console.WriteLine("message response: " + response + " to client: " + clientID);
-            return response.Item1;
+                Console.WriteLine("message response: " + response + " to client: " + clientID);
+                response.Item1 = versionNumber + " " + response.Item1;
+                return response.Item1;
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("got an error from handling message");
+                return "";
+            }
         }
 
-        private async Task<(string, bool)> messageTypeSwitch(uint clientID, MesType messageType, string[] messageContent)
+        private async Task<(string, bool)> messageTypeSwitch(uint clientID, CliMesType messageType, string[] messageContent)
         {
             (string, bool) response = ("", false);
             switch (messageType)
             {
-                case MesType.SendMessage:
+                case CliMesType.SendMessage:
                     {
                         response = await sendMessage(clientID, messageContent);
                         break;
                     }
-                case MesType.AttemptLogin:
+                case CliMesType.AttemptLogin:
                     {
                         response = await attemptLogin(clientID, messageContent);
                         break;
                     }
-                case MesType.AttemptRegisterAccount:
+                case CliMesType.AttemptRegisterAccount:
                     {
                         response = await attemptRegisterAccount(clientID, messageContent);
                         break;
@@ -61,7 +71,7 @@ namespace ServerAPP
         {
             Console.WriteLine("function sendMessage got: " + messageContent + " from client: " + clientID);
 
-            return Task.FromResult((String.Join(" ", messageContent), false));
+            return Task.FromResult((SerMesType.DeliverMessage + " " + String.Join(" ", messageContent), false));
         }
 
         private async Task<(string, bool)> attemptLogin(uint clientID, string[] messageContent)
@@ -73,6 +83,7 @@ namespace ServerAPP
             }
 
             (string, bool) response = await database.login(messageContent[0], messageContent[1]);
+            response.Item1 = SerMesType.LoginSuccess + " " + response.Item1;
             return response;
         }
 
@@ -85,6 +96,7 @@ namespace ServerAPP
             }
 
             (string, bool) response = await database.registerAccount(messageContent[0], messageContent[1]);
+            response.Item1 = SerMesType.AccountRegistrationSuccess + " " + response.Item1;
             return response;
         }
     }

@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Text;
 using System;
-using MesType = SharedLib.SharedLibrary.MessageType;
+using CliMesType = SharedLib.SharedLibrary.ClientMessageType;
 
 namespace ClientApp {
     internal class API {
@@ -22,7 +22,7 @@ namespace ClientApp {
                 Console.WriteLine("Send: no massage found");
                 return;
             }
-            await SendToServer(message, MesType.SendMessage);
+            await SendToServer(message, CliMesType.SendMessage);
         }
 
         public async Task<bool> AttemptLogin(string username, string password) {
@@ -35,7 +35,7 @@ namespace ClientApp {
                 return false;
             }
             string message = username + " " + password;
-            await SendToServer(message, MesType.AttemptLogin);
+            await SendToServer(message, CliMesType.AttemptLogin);
             return true;
         }
 
@@ -49,11 +49,11 @@ namespace ClientApp {
                 return false;
             }
             string message = username + " " + password;
-            await SendToServer(message, MesType.AttemptRegisterAccount);
+            await SendToServer(message, CliMesType.AttemptRegisterAccount);
             return true;
         }
 
-        private async Task<bool> SendToServer(string message, MesType mt)
+        private async Task<bool> SendToServer(string message, CliMesType mt)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(versionNumber + " " + mt + " " + message);
             await stream.WriteAsync(buffer, 0, buffer.Length);
