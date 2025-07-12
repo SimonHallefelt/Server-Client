@@ -42,6 +42,16 @@ namespace ClientApp {
             await api.AttemptRegisterAccount(username, password);
         }
 
+        private async void OnUserClicked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            // switch to that users chat
+            if (sender is Button button)
+            {
+                Console.WriteLine("OnUserClicked, user that was clicked is: " + button.Content);
+            }
+            return;
+        }
+
         public Task<bool> addNewMessage(string message)
         {
             Dispatcher.UIThread.Post(() =>
@@ -71,23 +81,27 @@ namespace ClientApp {
         {
             Dispatcher.UIThread.Post(() =>
             {
-                var newMessage = new Border
+                var newUser = new Border
                 {
                     BorderBrush = Brushes.Black,
                     BorderThickness = new Thickness(2),
                     CornerRadius = new CornerRadius(5),
                     Margin = new Thickness(10),
-                    Child = new Button
-                    {
-                        Content = username,
-                        Margin = new Thickness(10),
-                    }
+                    
                 };
+                
+                var button = new Button
+                {
+                    Content = username,
+                    Margin = new Thickness(10),
+                };
+                button.Click += OnUserClicked;
 
-                UserContainer.Children.Add(newMessage);
+                newUser.Child = button;
+                UserContainer.Children.Add(newUser);
 
                 UserScroll.ScrollToEnd();
-            }); // Update the UI whith a new message
+            }); // Update the UI with a new message
             return Task.FromResult(true);
         }
     }
