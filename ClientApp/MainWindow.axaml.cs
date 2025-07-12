@@ -1,9 +1,12 @@
 using Avalonia.Controls;
+using Avalonia;
 using System.Net.Sockets;
 using System.Text;
 using Avalonia.Threading;
 using System.Threading.Tasks;
 using System;
+using Avalonia.Media;
+using Avalonia.VisualTree;
 
 namespace ClientApp {
     public partial class MainWindow : Window {
@@ -39,7 +42,25 @@ namespace ClientApp {
             while (true) {
                 string message = await api.GetMessage();
                 if (message == null) continue;
-                Dispatcher.UIThread.Post(() => ServerMessages.Text = message); // Update the UI
+                Dispatcher.UIThread.Post(() =>
+                {
+                    var newMessage = new Border
+                    {
+                        BorderBrush = Brushes.Black,
+                        BorderThickness = new Thickness(2),
+                        CornerRadius = new CornerRadius(5),
+                        Margin = new Thickness(10),
+                        Child = new TextBlock { 
+                            Text = message,
+                            Margin = new Thickness(10),
+                            TextWrapping = TextWrapping.Wrap
+                        }
+                    };
+
+                    MessageContainer.Children.Add(newMessage);
+                
+                    MessageScroll.ScrollToEnd();
+                }); // Update the UI whith a new message
             }
         }
     }
