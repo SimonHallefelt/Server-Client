@@ -74,6 +74,16 @@ namespace ClientApp
                         response = await deliverRegisteredAccounts(messageContent);
                         break;
                     }
+                case SerMesType.AccountRegistrationSuccess:
+                    {
+                        response = await changeUser(messageContent);
+                        break;
+                    }
+                case SerMesType.LoginSuccess:
+                    {
+                        response = await changeUser(messageContent);
+                        break;
+                    }
                 default:
                     {
                         Console.WriteLine("has not implemented a function for: " + messageType);
@@ -92,6 +102,15 @@ namespace ClientApp
 
         private async Task<bool> deliverMessages(string[] messageContent)
         {
+            return false;
+        }
+
+        private async Task<bool> changeUser(string[] messageContent)
+        {
+            if (messageContent[0] == "True")
+            {
+                mainWindow.setUsername(messageContent[1]);
+            }
             return false;
         }
 

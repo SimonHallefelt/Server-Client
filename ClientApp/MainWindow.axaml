@@ -55,6 +55,7 @@
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 			
 			<TextBlock Grid.Column="0" Grid.Row="0" Text="Username:" VerticalAlignment="Center" Margin="5"/>
@@ -65,6 +66,8 @@
 
 			<Button Grid.Row="2"  Grid.Column="0" Click="OnLoginClick" Content="Login" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
 			<Button Grid.Row="2"  Grid.Column="1" Click="OnRegisterClick" Content="Register" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
+			
+			<TextBlock x:Name="CurrentUser" Grid.ColumnSpan="2" Grid.Row="3" Text="User: " VerticalAlignment="Center" Margin="3"/>
 		</Grid>
 	</Grid>
 			

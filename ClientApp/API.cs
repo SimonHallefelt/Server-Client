@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System;
 using CliMesType = SharedLib.SharedLibrary.ClientMessageType;
+using Tmds.DBus.Protocol;
 
 namespace ClientApp {
     internal class API {
@@ -50,6 +51,20 @@ namespace ClientApp {
             }
             string message = username + " " + password;
             await SendToServer(message, CliMesType.AttemptRegisterAccount);
+            return true;
+        }
+
+        public async Task<bool> requestChatLogFor(string username1, string username2) {
+            if (username1 == null || username2 == null) {
+                Console.WriteLine("Send: a username not found");
+                return false;
+            }
+            if (username1.Contains(" ") || username2.Contains(" ")) {
+                Console.WriteLine("Send: a username contained space");
+                return false;
+            }
+            string message = username1 + " " + username2;
+            await SendToServer(message, CliMesType.RequestChatLogFor);
             return true;
         }
 

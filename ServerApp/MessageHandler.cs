@@ -87,7 +87,7 @@ namespace ServerAPP
             {
                 _ = Task.Run(() => deliverRegisteredAccounts(client, messageContent[0]));
             }
-            response.Item1 = SerMesType.LoginSuccess + " " + response.Item1;
+            response.Item1 = SerMesType.LoginSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
         }
 
@@ -104,7 +104,7 @@ namespace ServerAPP
             {
                 _ = Task.Run(() => deliverRegisteredAccounts(client, messageContent[0]));
             }
-            response.Item1 = SerMesType.AccountRegistrationSuccess + " " + response.Item1;
+            response.Item1 = SerMesType.AccountRegistrationSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
         }
 

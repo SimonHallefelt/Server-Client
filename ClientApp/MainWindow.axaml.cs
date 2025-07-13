@@ -12,6 +12,7 @@ namespace ClientApp {
     public partial class MainWindow : Window
     {
         private API api;
+        private volatile string username = null;
 
         public MainWindow()
         {
@@ -42,14 +43,25 @@ namespace ClientApp {
             await api.AttemptRegisterAccount(username, password);
         }
 
-        private async void OnUserClicked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void onUserClicked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             // switch to that users chat
             if (sender is Button button)
             {
-                Console.WriteLine("OnUserClicked, user that was clicked is: " + button.Content);
+                Console.WriteLine("onUserClicked, user that was clicked is: " + button.Content);
+                await api.requestChatLogFor(this.username, button.Content + "");
             }
-            return;
+        }
+
+        public void setUsername(string username)
+        {
+            Console.WriteLine("Change user to: " + username);
+            this.username = username;
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (CurrentUser != null)
+                    CurrentUser.Text = $"User: {username}";
+            });
         }
 
         public Task<bool> addNewMessage(string message)
@@ -95,7 +107,7 @@ namespace ClientApp {
                     Content = username,
                     Margin = new Thickness(10),
                 };
-                button.Click += OnUserClicked;
+                button.Click += onUserClicked;
 
                 newUser.Child = button;
                 UserContainer.Children.Add(newUser);

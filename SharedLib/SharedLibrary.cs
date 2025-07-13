@@ -6,7 +6,8 @@ public class SharedLibrary
     {
         SendMessage,
         AttemptLogin,
-        AttemptRegisterAccount
+        AttemptRegisterAccount,
+        RequestChatLogFor
     }
 
     public enum ServerMessageType // message types server use when sending to client
