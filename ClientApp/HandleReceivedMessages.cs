@@ -116,7 +116,9 @@ namespace ClientApp
 
         private async Task<bool> deliverRegisteredAccounts(string[] messageContent)
         {
-            foreach(string user in messageContent) {
+            await mainWindow.removeAllRegisteredUsers();
+            foreach (string user in messageContent)
+            {
                 await mainWindow.addNewUser(user);
             }
             

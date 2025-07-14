@@ -88,7 +88,7 @@ namespace ClientApp {
             }); // Update the UI whith a new message
             return Task.FromResult(true);
         }
-        
+
         public Task<bool> addNewUser(string username)
         {
             Dispatcher.UIThread.Post(() =>
@@ -99,9 +99,9 @@ namespace ClientApp {
                     BorderThickness = new Thickness(2),
                     CornerRadius = new CornerRadius(5),
                     Margin = new Thickness(10),
-                    
+
                 };
-                
+
                 var button = new Button
                 {
                     Content = username,
@@ -115,6 +115,15 @@ namespace ClientApp {
                 UserScroll.ScrollToEnd();
             }); // Update the UI with a new message
             return Task.FromResult(true);
+        }
+
+        public Task removeAllRegisteredUsers()
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                UserContainer.Children.Clear();
+            });
+            return Task.CompletedTask;
         }
     }
 }
