@@ -43,17 +43,17 @@ namespace ClientApp {
             await api.AttemptRegisterAccount(username, password);
         }
 
-        private async void onUserClicked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void OnUserClicked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             // switch to that users chat
             if (sender is Button button)
             {
                 Console.WriteLine("onUserClicked, user that was clicked is: " + button.Content);
-                await api.requestChatLogFor(this.username, button.Content + "");
+                await api.RequestChatLogFor(this.username, button.Content + "");
             }
         }
 
-        public void setUsername(string username)
+        public void SetUsername(string username)
         {
             Console.WriteLine("Change user to: " + username);
             this.username = username;
@@ -64,7 +64,7 @@ namespace ClientApp {
             });
         }
 
-        public Task<bool> addNewMessage(string message)
+        public Task<bool> AddNewMessage(string message)
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -89,7 +89,7 @@ namespace ClientApp {
             return Task.FromResult(true);
         }
 
-        public Task<bool> addNewUser(string username)
+        public Task<bool> AddNewUser(string username)
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -107,7 +107,7 @@ namespace ClientApp {
                     Content = username,
                     Margin = new Thickness(10),
                 };
-                button.Click += onUserClicked;
+                button.Click += OnUserClicked;
 
                 newUser.Child = button;
                 UserContainer.Children.Add(newUser);
@@ -117,7 +117,7 @@ namespace ClientApp {
             return Task.FromResult(true);
         }
 
-        public Task removeAllRegisteredUsers()
+        public Task RemoveAllRegisteredUsers()
         {
             Dispatcher.UIThread.Post(() =>
             {

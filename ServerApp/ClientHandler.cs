@@ -35,7 +35,7 @@ namespace ServerAPP {
                     string? received = await Receive();
                     if (received == null) break;
                     Console.WriteLine($"Received from client {clientID}: {received}");
-                    string? messageResponse = await messageHandler.handleMessage(this, received);
+                    string? messageResponse = await messageHandler.HandleMessage(this, received);
                     if (messageResponse == null) break;
                     await Send(messageResponse);
                 }

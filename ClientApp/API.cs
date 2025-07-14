@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Text;
 using System;
 using CliMesType = SharedLib.SharedLibrary.ClientMessageType;
-using Tmds.DBus.Protocol;
 
 namespace ClientApp {
     internal class API {
@@ -54,7 +53,7 @@ namespace ClientApp {
             return true;
         }
 
-        public async Task<bool> requestChatLogFor(string username1, string username2) {
+        public async Task<bool> RequestChatLogFor(string username1, string username2) {
             if (username1 == null || username2 == null) {
                 Console.WriteLine("Send: a username not found");
                 return false;

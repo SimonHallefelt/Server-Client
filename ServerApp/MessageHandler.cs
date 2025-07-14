@@ -13,7 +13,7 @@ namespace ServerAPP
             this.database = new Database();
         }
 
-        public async Task<string> handleMessage(ClientHandler client, string message)
+        public async Task<string> HandleMessage(ClientHandler client, string message)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace ServerAPP
                 CliMesType messageType = Enum.Parse<CliMesType>(data[1]);
                 string[] messageContent = data[2..];
 
-                (string, bool) response = await messageTypeSwitch(client, messageType, messageContent);
+                (string, bool) response = await MessageTypeSwitch(client, messageType, messageContent);
 
                 Console.WriteLine("message response: " + response + " to client: " + client.getClientID());
                 response.Item1 = versionNumber + " " + response.Item1;
@@ -37,24 +37,24 @@ namespace ServerAPP
             }
         }
 
-        private async Task<(string, bool)> messageTypeSwitch(ClientHandler client, CliMesType messageType, string[] messageContent)
+        private async Task<(string, bool)> MessageTypeSwitch(ClientHandler client, CliMesType messageType, string[] messageContent)
         {
             (string, bool) response = ("", false);
             switch (messageType)
             {
                 case CliMesType.SendMessage:
                     {
-                        response = await sendMessage(client, messageContent);
+                        response = await SendMessage(client, messageContent);
                         break;
                     }
                 case CliMesType.AttemptLogin:
                     {
-                        response = await attemptLogin(client, messageContent);
+                        response = await AttemptLogin(client, messageContent);
                         break;
                     }
                 case CliMesType.AttemptRegisterAccount:
                     {
-                        response = await attemptRegisterAccount(client, messageContent);
+                        response = await AttemptRegisterAccount(client, messageContent);
                         break;
                     }
                 default:
@@ -67,14 +67,14 @@ namespace ServerAPP
             return response;
         }
 
-        private Task<(string, bool)> sendMessage(ClientHandler client, string[] messageContent)
+        private Task<(string, bool)> SendMessage(ClientHandler client, string[] messageContent)
         {
             Console.WriteLine("function sendMessage got: " + messageContent + " from client: " + client.getClientID());
 
             return Task.FromResult((SerMesType.DeliverMessage + " " + String.Join(" ", messageContent), false));
         }
 
-        private async Task<(string, bool)> attemptLogin(ClientHandler client, string[] messageContent)
+        private async Task<(string, bool)> AttemptLogin(ClientHandler client, string[] messageContent)
         {
             Console.WriteLine("function attemptLogin got: " + messageContent + " from client: " + client.getClientID());
             if (messageContent.Length < 2)
@@ -82,16 +82,16 @@ namespace ServerAPP
                 return ("missing username or password", false);
             }
 
-            (string, bool) response = await database.login(messageContent[0], messageContent[1]);
+            (string, bool) response = await database.Login(messageContent[0], messageContent[1]);
             if (response.Item2)
             {
-                _ = Task.Run(() => deliverRegisteredAccounts(client, messageContent[0]));
+                _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0]));
             }
             response.Item1 = SerMesType.LoginSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
         }
 
-        private async Task<(string, bool)> attemptRegisterAccount(ClientHandler client, string[] messageContent)
+        private async Task<(string, bool)> AttemptRegisterAccount(ClientHandler client, string[] messageContent)
         {
             Console.WriteLine("function attemptRegisterAccount got: " + messageContent + " from client: " + client.getClientID());
             if (messageContent.Length < 2)
@@ -99,21 +99,21 @@ namespace ServerAPP
                 return ("missing username or password", false);
             }
 
-            (string, bool) response = await database.registerAccount(messageContent[0], messageContent[1]);
+            (string, bool) response = await database.RegisterAccount(messageContent[0], messageContent[1]);
             if (response.Item2)
             {
-                _ = Task.Run(() => deliverRegisteredAccounts(client, messageContent[0]));
+                _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0]));
             }
             response.Item1 = SerMesType.AccountRegistrationSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
         }
 
-        private async Task deliverRegisteredAccounts(ClientHandler client, string username)
+        private async Task DeliverRegisteredAccounts(ClientHandler client, string username)
         {
             Console.WriteLine("deliverRegisteredAccounts to client: " + client.getClientID());
             try
             {
-                string[] registeredAccounts = await database.getAllOtherRegisteredAccounts(username);
+                string[] registeredAccounts = await database.GetAllOtherRegisteredAccounts(username);
                 if (registeredAccounts.Length == 0)
                 {
                     Console.WriteLine("error: deliverRegisteredAccounts to client is empty: " + client.getClientID());

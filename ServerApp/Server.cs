@@ -11,7 +11,7 @@ namespace ServerAPP {
         uint numberOfClients;
 
         static async Task Main(string[] args) {
-            await new Server().run();
+            await new Server().Run();
         }
 
         public Server() {
@@ -24,7 +24,7 @@ namespace ServerAPP {
             Console.WriteLine("Started the Server");
         }
 
-        private async Task run() {
+        private async Task Run() {
             while (true) {
                 TcpClient client = await server.AcceptTcpClientAsync();
                 ClientHandler clientHandler = new ClientHandler(client, numberOfClients, messageHandler);

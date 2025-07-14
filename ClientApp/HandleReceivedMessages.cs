@@ -61,27 +61,27 @@ namespace ClientApp
             {
                 case SerMesType.DeliverMessage:
                     {
-                        response = await deliverMessage(messageContent);
+                        response = await DeliverMessage(messageContent);
                         break;
                     }
                 case SerMesType.DeliverMessages:
                     {
-                        response = await deliverMessages(messageContent);
+                        response = await DeliverMessages(messageContent);
                         break;
                     }
                 case SerMesType.DeliverRegisteredAccounts:
                     {
-                        response = await deliverRegisteredAccounts(messageContent);
+                        response = await DeliverRegisteredAccounts(messageContent);
                         break;
                     }
                 case SerMesType.AccountRegistrationSuccess:
                     {
-                        response = await changeUser(messageContent);
+                        response = await ChangeUser(messageContent);
                         break;
                     }
                 case SerMesType.LoginSuccess:
                     {
-                        response = await changeUser(messageContent);
+                        response = await ChangeUser(messageContent);
                         break;
                     }
                 default:
@@ -94,32 +94,32 @@ namespace ClientApp
             return response;
         }
 
-        private async Task<bool> deliverMessage(string[] messageContent)
+        private async Task<bool> DeliverMessage(string[] messageContent)
         {
-            await mainWindow.addNewMessage(String.Join(" ", messageContent));
+            await mainWindow.AddNewMessage(String.Join(" ", messageContent));
             return true;
         }
 
-        private async Task<bool> deliverMessages(string[] messageContent)
+        private async Task<bool> DeliverMessages(string[] messageContent)
         {
             return false;
         }
 
-        private async Task<bool> changeUser(string[] messageContent)
+        private async Task<bool> ChangeUser(string[] messageContent)
         {
             if (messageContent[0] == "True")
             {
-                mainWindow.setUsername(messageContent[1]);
+                mainWindow.SetUsername(messageContent[1]);
             }
             return false;
         }
 
-        private async Task<bool> deliverRegisteredAccounts(string[] messageContent)
+        private async Task<bool> DeliverRegisteredAccounts(string[] messageContent)
         {
-            await mainWindow.removeAllRegisteredUsers();
+            await mainWindow.RemoveAllRegisteredUsers();
             foreach (string user in messageContent)
             {
-                await mainWindow.addNewUser(user);
+                await mainWindow.AddNewUser(user);
             }
             
             return false;
