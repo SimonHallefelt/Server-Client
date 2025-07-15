@@ -57,6 +57,11 @@ namespace ServerAPP
                         response = await AttemptRegisterAccount(client, messageContent);
                         break;
                     }
+                case CliMesType.RequestChatLogFor:
+                    {
+                        response = await RequestChatLogFor(client, messageContent);
+                        break;
+                    }
                 default:
                     {
                         Console.WriteLine("has not implemented a function for: " + messageType);
@@ -67,11 +72,16 @@ namespace ServerAPP
             return response;
         }
 
-        private Task<(string, bool)> SendMessage(ClientHandler client, string[] messageContent)
+        private async Task<(string, bool)> SendMessage(ClientHandler client, string[] messageContent)
         {
             Console.WriteLine("function sendMessage got: " + messageContent + " from client: " + client.getClientID());
+            if (messageContent.Length < 3)
+            {
+                return ("error: SendMessage missing a user or the message", false);
+            }
+            await database.addMessage(messageContent[0], messageContent[1], messageContent[..2]);
 
-            return Task.FromResult((SerMesType.DeliverMessage + " " + String.Join(" ", messageContent), false));
+            return (SerMesType.DeliverMessage + " " + String.Join(" ", messageContent), false);
         }
 
         private async Task<(string, bool)> AttemptLogin(ClientHandler client, string[] messageContent)
@@ -105,6 +115,20 @@ namespace ServerAPP
                 _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0]));
             }
             response.Item1 = SerMesType.AccountRegistrationSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
+            return response;
+        }
+
+        private async Task<(string, bool)> RequestChatLogFor(ClientHandler client, string[] messageContent)
+        {
+            Console.WriteLine("function RequestChatLogFor got: " + messageContent + " from client: " + client.getClientID());
+            if (messageContent.Length < 2)
+            {
+                return ("missing a username", false);
+            }
+
+            (string, bool) response = await database.GetChatLogsFor(messageContent[0], messageContent[1]);
+
+            response.Item1 = SerMesType.DeliverMessages + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
         }
 

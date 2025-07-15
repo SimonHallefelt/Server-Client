@@ -13,6 +13,7 @@ namespace ClientApp {
     {
         private API api;
         private volatile string username = null;
+        private volatile string otherUser = null;
 
         public MainWindow()
         {
@@ -25,7 +26,10 @@ namespace ClientApp {
         private void OnSendButtonClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             string message = MessageInput.Text;
-            api.SendMessage(message);
+            if (username != null && otherUser != null)
+                api.SendMessage(username + " " + otherUser + " " + message);
+            else
+                Console.WriteLine("cant send message, is not login or missing a receiver");
             MessageInput.Text = "";
         }
 
@@ -48,7 +52,9 @@ namespace ClientApp {
             // switch to that users chat
             if (sender is Button button)
             {
-                Console.WriteLine("onUserClicked, user that was clicked is: " + button.Content);
+                string otherUser = button.Content.ToString();
+                this.otherUser = otherUser;
+                Console.WriteLine("onUserClicked, user that was clicked is: " + otherUser);
                 await api.RequestChatLogFor(this.username, button.Content + "");
             }
         }
@@ -57,6 +63,7 @@ namespace ClientApp {
         {
             Console.WriteLine("Change user to: " + username);
             this.username = username;
+            this.otherUser = null;
             Dispatcher.UIThread.Post(() =>
             {
                 if (CurrentUser != null)
