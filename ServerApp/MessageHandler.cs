@@ -74,14 +74,17 @@ namespace ServerAPP
 
         private async Task<(string, bool)> SendMessage(ClientHandler client, string[] messageContent)
         {
-            Console.WriteLine("function sendMessage got: " + messageContent + " from client: " + client.getClientID());
+            Console.WriteLine("function sendMessage got: " + string.Join(" ", messageContent) + " from client: " + client.getClientID());
             if (messageContent.Length < 3)
             {
                 return ("error: SendMessage missing a user or the message", false);
             }
-            await database.addMessage(messageContent[0], messageContent[1], messageContent[..2]);
+            string user1 = messageContent[0];
+            string user2 = messageContent[1];
+            string[] messageText = messageContent[2..];
+            var response = await database.addMessage(user1, user2, messageText);
 
-            return (SerMesType.DeliverMessage + " " + String.Join(" ", messageContent), false);
+            return (SerMesType.DeliverMessage + " " + user1 + " " + user2 + " " + response.Item1, response.Item2);
         }
 
         private async Task<(string, bool)> AttemptLogin(ClientHandler client, string[] messageContent)
@@ -120,7 +123,7 @@ namespace ServerAPP
 
         private async Task<(string, bool)> RequestChatLogFor(ClientHandler client, string[] messageContent)
         {
-            Console.WriteLine("function RequestChatLogFor got: " + messageContent + " from client: " + client.getClientID());
+            Console.WriteLine("function RequestChatLogFor got: " + string.Join(" ", messageContent) + " from client: " + client.getClientID());
             if (messageContent.Length < 2)
             {
                 return ("missing a username", false);
@@ -128,7 +131,7 @@ namespace ServerAPP
 
             (string, bool) response = await database.GetChatLogsFor(messageContent[0], messageContent[1]);
 
-            response.Item1 = SerMesType.DeliverMessages + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
+            response.Item1 = SerMesType.DeliverMessages + " " + response.Item2 + " " + messageContent[0] + " " + messageContent[1] + " " + response.Item1;
             return response;
         }
 

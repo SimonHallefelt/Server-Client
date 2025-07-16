@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SerMesType = SharedLib.SharedLibrary.ServerMessageType;
+using Message = SharedLib.SharedLibrary.Message;
+using System.Linq;
 
 namespace ClientApp
 {
@@ -8,6 +11,7 @@ namespace ClientApp
     {
         API api;
         MainWindow mainWindow;
+        List<Message> messages = null;
 
         public HandleReceivedMessages(API api, MainWindow mainWindow)
         {
@@ -96,12 +100,30 @@ namespace ClientApp
 
         private async Task<bool> DeliverMessage(string[] messageContent)
         {
-            await mainWindow.AddNewMessage(String.Join(" ", messageContent));
-            return true;
+            if (messageContent[0] == mainWindow.getUsername() && messageContent[1] == mainWindow.getOtherUser())
+            {
+                if (messages == null)
+                    messages = ParesMessages(messageContent[2..]);
+                else
+                    messages.Add(ParesMessages(messageContent[2..])[0]);
+                Message message = messages.Last();
+                await mainWindow.AddNewMessage(message.GetMessageContent());
+                return true;
+            }
+            return false;
         }
 
         private async Task<bool> DeliverMessages(string[] messageContent)
         {
+            if (messageContent[0] == "True" && messageContent[1] == mainWindow.getUsername() && messageContent[2] == mainWindow.getOtherUser())
+            {
+                this.messages = ParesMessages(messageContent[3..]);
+                foreach (var message in messages)
+                {
+                    await mainWindow.AddNewMessage(message.GetMessageContent());
+                }
+                return true;
+            }
             return false;
         }
 
@@ -121,8 +143,41 @@ namespace ClientApp
             {
                 await mainWindow.AddNewUser(user);
             }
-            
+
             return false;
+        }
+
+
+        public List<Message> ParesMessages(string[] messagesString)
+        {
+            Console.WriteLine("test "+string.Join(" ", messagesString));
+            int i = 3;
+            List<Message> messages = new List<Message>();
+            try
+            {
+                while (i < messagesString.Length)
+                {
+                    int wordCount = int.Parse(messagesString[i]);
+
+                    messages.Add(ParesMessage(messagesString[(i - 3)..(i + wordCount + 1)]));
+                    i += wordCount + 4;
+                }
+
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("could not pares all messages");
+            }
+            return messages;
+        }
+
+        public Message ParesMessage(string[] message)
+        {
+            string sender = message[0];
+            DateTime dateTime = DateTime.Parse(string.Join(" ", message[1..3]));
+            int wordCount = int.Parse(message[3]);
+            string[] messageText = message[4..];
+            return new Message(sender, dateTime, messageText);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Message = SharedLib.SharedLibrary.Message;
 
 namespace ServerAPP
 {
@@ -13,20 +14,24 @@ namespace ServerAPP
             this.chats = new ConcurrentDictionary<string, List<Message>>();
         }
 
-        public Task<(string, bool)> addMessage(string user1, string user2, string[] messageContent)
+        public Task<(string, bool)> addMessage(string sender, string receiver, string[] messageContent)
         {
             try
             {
-                Message message = new Message(messageContent);
-                string key = user1 + " " + user2;
+                DateTime time = System.DateTime.Now;
+                Message message = new Message(sender, time, messageContent);
+                string key = makeKey(sender, receiver);
                 if (chats.TryGetValue(key, out var list))
                 {
                     list.Add(message);
-                    return Task.FromResult(("added message to the list", true));
-                } else
+                    Console.WriteLine($"added a new message to {sender} and {receiver}");
+                    return Task.FromResult((message.ToString(), true));
+                }
+                else
                 {
                     chats.TryAdd(key, [message]);
-                    return Task.FromResult(("made a new message list", true));
+                    Console.WriteLine($"made a new message list for {sender} and {receiver}");
+                    return Task.FromResult((message.ToString(), true));
                 }
             }
             catch (System.Exception)
@@ -56,37 +61,22 @@ namespace ServerAPP
 
         public Task<(string, bool)> GetChatLogsFor(string user1, string user2)
         {
-            string key = user1 + " " + user2;
+            string key = makeKey(user1, user2);
             if (chats.TryGetValue(key, out var list))
             {
                 string messagesString = "";
                 foreach (Message message in list)
                 {
-                    messagesString += message.ToString();
+                    messagesString += message.ToString() + " ";
                 }
                 return Task.FromResult((messagesString, true));
             }
             return Task.FromResult(("", false));
         }
 
-    }
-
-    class Message
-    {
-        string messageContent;
-        int wordCount;
-
-        public Message(string[] messageContent)
+        private string makeKey(string user1, string user2)
         {
-            this.wordCount = messageContent.Length;
-            this.messageContent = string.Join(" ", messageContent);
-
-
-        }
-
-        public override string ToString()
-        {
-            return wordCount + " " + messageContent;
+            return (string.Compare(user1, user2) < 0 ? user1 : user2) + " " + (string.Compare(user1, user2) < 0 ? user2 : user1);
         }
     }
 }

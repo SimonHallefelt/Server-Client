@@ -68,6 +68,7 @@ namespace ClientApp {
             {
                 if (CurrentUser != null)
                     CurrentUser.Text = $"User: {username}";
+                MessageContainer.Children.Clear();
             });
         }
 
@@ -131,6 +132,16 @@ namespace ClientApp {
                 UserContainer.Children.Clear();
             });
             return Task.CompletedTask;
+        }
+
+        public string getUsername()
+        {
+            return username;
+        }
+
+        public string getOtherUser()
+        {
+            return otherUser;
         }
     }
 }
