@@ -6,12 +6,12 @@ namespace ServerAPP
     class Database
     {
         private ConcurrentDictionary<string, string> loginInfo;
-        private ConcurrentDictionary<string, List<Message>> chats;
+        private ConcurrentDictionary<string, LinkedList<Message>> chats;
 
         public Database()
         {
             this.loginInfo = new ConcurrentDictionary<string, string>();
-            this.chats = new ConcurrentDictionary<string, List<Message>>();
+            this.chats = new ConcurrentDictionary<string, LinkedList<Message>>();
         }
 
         public Task<(string, bool)> addMessage(string sender, string receiver, string[] messageContent)
@@ -23,13 +23,13 @@ namespace ServerAPP
                 string key = makeKey(sender, receiver);
                 if (chats.TryGetValue(key, out var list))
                 {
-                    list.Add(message);
+                    list.AddLast(message);
                     Console.WriteLine($"added a new message to {sender} and {receiver}");
                     return Task.FromResult((message.ToString(), true));
                 }
                 else
                 {
-                    chats.TryAdd(key, [message]);
+                    chats.TryAdd(key, new LinkedList<Message>(new[] { message }));
                     Console.WriteLine($"made a new message list for {sender} and {receiver}");
                     return Task.FromResult((message.ToString(), true));
                 }
