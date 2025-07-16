@@ -54,6 +54,7 @@ namespace ClientApp {
             {
                 string otherUser = button.Content.ToString();
                 this.otherUser = otherUser;
+                MessageContainer.Children.Clear();
                 Console.WriteLine("onUserClicked, user that was clicked is: " + otherUser);
                 await api.RequestChatLogFor(this.username, button.Content + "");
             }
