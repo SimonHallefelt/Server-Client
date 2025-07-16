@@ -5,32 +5,39 @@ using System;
 using CliMesType = SharedLib.SharedLibrary.ClientMessageType;
 
 namespace ClientApp {
-    internal class API {
+    internal class API
+    {
         private uint versionNumber;
         private TcpClient client;
         private NetworkStream stream;
 
-        public API() {
+        public API()
+        {
             versionNumber = 0;
             client = new TcpClient();
             client.Connect("127.0.0.1", 5000);
             stream = client.GetStream();
         }
 
-        public async void SendMessage(string message) {
-            if (message == null) {
+        public async void SendMessage(string message)
+        {
+            if (message == null)
+            {
                 Console.WriteLine("Send: no massage found");
                 return;
             }
             await SendToServer(message, CliMesType.SendMessage);
         }
 
-        public async Task<bool> AttemptLogin(string username, string password) {
-            if (username == null || password == null) {
+        public async Task<bool> AttemptLogin(string username, string password)
+        {
+            if (username == null || password == null)
+            {
                 Console.WriteLine("Send: no password or username found");
                 return false;
             }
-            if (username.Contains(" ") || password.Contains(" ")) {
+            if (username.Contains(" ") || password.Contains(" "))
+            {
                 Console.WriteLine("Send: password or username contained space");
                 return false;
             }
@@ -39,12 +46,15 @@ namespace ClientApp {
             return true;
         }
 
-        public async Task<bool> AttemptRegisterAccount(string username, string password) {
-            if (username == null || password == null) {
+        public async Task<bool> AttemptRegisterAccount(string username, string password)
+        {
+            if (username == null || password == null)
+            {
                 Console.WriteLine("Send: no password or username found");
                 return false;
             }
-            if (username.Contains(" ") || password.Contains(" ")) {
+            if (username.Contains(" ") || password.Contains(" "))
+            {
                 Console.WriteLine("Send: password or username contained space");
                 return false;
             }
@@ -53,12 +63,15 @@ namespace ClientApp {
             return true;
         }
 
-        public async Task<bool> RequestChatLogFor(string username1, string username2) {
-            if (username1 == null || username2 == null) {
+        public async Task<bool> RequestChatLogFor(string username1, string username2)
+        {
+            if (username1 == null || username2 == null)
+            {
                 Console.WriteLine("Send: a username not found");
                 return false;
             }
-            if (username1.Contains(" ") || username2.Contains(" ")) {
+            if (username1.Contains(" ") || username2.Contains(" "))
+            {
                 Console.WriteLine("Send: a username contained space");
                 return false;
             }
@@ -82,5 +95,18 @@ namespace ClientApp {
             return (versionNumber, Encoding.UTF8.GetString(buffer, 0, bytesRead));
         }
 
+        public async Task RequestUpdateFromServer(string username, string otherUser, DateTime dateTime)
+        {
+            if (username == null)
+            {
+                return;
+            }
+            string message;
+            if (otherUser == null)
+                message = dateTime + " " + username;
+            else
+                message = dateTime + " " + username + " " + otherUser;
+            await SendToServer(message, CliMesType.RequestUpdateFromServer);
+        }
     }
 }

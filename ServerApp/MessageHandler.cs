@@ -143,7 +143,7 @@ namespace ServerAPP
                 string[] registeredAccounts = await database.GetAllOtherRegisteredAccounts(username);
                 if (registeredAccounts.Length == 0)
                 {
-                    Console.WriteLine("error: deliverRegisteredAccounts to client is empty: " + client.getClientID());
+                    Console.WriteLine("deliverRegisteredAccounts to client is empty: " + client.getClientID());
                     return;
                 }
                 string message = versionNumber + " " + SerMesType.DeliverRegisteredAccounts + " " + String.Join(" ", registeredAccounts);

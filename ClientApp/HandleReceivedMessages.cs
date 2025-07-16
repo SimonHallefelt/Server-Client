@@ -17,7 +17,17 @@ namespace ClientApp
         {
             this.api = api;
             this.mainWindow = mainWindow;
+            Task.Run(RequestUpdates); // Start periodic updates in the background
             Task.Run(ReceiveMessages); // Start listening for server messages
+        }
+
+        private async Task RequestUpdates()
+        {
+            while (true)
+            {
+                await api.RequestUpdateFromServer(mainWindow.getUsername(), mainWindow.getOtherUser(), DateTime.Now);
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
         }
 
         private async Task ReceiveMessages()
