@@ -62,6 +62,11 @@ namespace ServerAPP
                         response = await RequestChatLogFor(client, messageContent);
                         break;
                     }
+                case CliMesType.RequestUpdateFromServer:
+                    {
+                        response = await RequestUpdateFromServer(client, messageContent);
+                        break;
+                    }
                 default:
                     {
                         Console.WriteLine("has not implemented a function for: " + messageType);
@@ -89,7 +94,7 @@ namespace ServerAPP
 
         private async Task<(string, bool)> AttemptLogin(ClientHandler client, string[] messageContent)
         {
-            Console.WriteLine("function attemptLogin got: " + messageContent + " from client: " + client.getClientID());
+            Console.WriteLine("function attemptLogin got: " + string.Join(" ", messageContent) + " from client: " + client.getClientID());
             if (messageContent.Length < 2)
             {
                 return ("missing username or password", false);
@@ -98,7 +103,7 @@ namespace ServerAPP
             (string, bool) response = await database.Login(messageContent[0], messageContent[1]);
             if (response.Item2)
             {
-                _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0]));
+                _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0], null));
             }
             response.Item1 = SerMesType.LoginSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
@@ -106,7 +111,7 @@ namespace ServerAPP
 
         private async Task<(string, bool)> AttemptRegisterAccount(ClientHandler client, string[] messageContent)
         {
-            Console.WriteLine("function attemptRegisterAccount got: " + messageContent + " from client: " + client.getClientID());
+            Console.WriteLine("function attemptRegisterAccount got: " + string.Join(" ", messageContent) + " from client: " + client.getClientID());
             if (messageContent.Length < 2)
             {
                 return ("missing username or password", false);
@@ -115,7 +120,7 @@ namespace ServerAPP
             (string, bool) response = await database.RegisterAccount(messageContent[0], messageContent[1]);
             if (response.Item2)
             {
-                _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0]));
+                _ = Task.Run(() => DeliverRegisteredAccounts(client, messageContent[0], null));
             }
             response.Item1 = SerMesType.AccountRegistrationSuccess + " " + response.Item2 + " " + messageContent[0] + " " + response.Item1;
             return response;
@@ -135,11 +140,49 @@ namespace ServerAPP
             return response;
         }
 
-        private async Task DeliverRegisteredAccounts(ClientHandler client, string username)
+        private async Task<(string, bool)> RequestUpdateFromServer(ClientHandler client, string[] messageContent)
+        {
+            Console.WriteLine("function RequestUpdateFromServer got: " + string.Join(" ", messageContent) + " from client: " + client.getClientID());
+            if (messageContent.Length < 3)
+            {
+                return ("missing a data", false);
+            }
+            int i = 0;
+            DateTime? UpdatedRegisteredAccounts = null;
+            DateTime? UpdatedMessages = null;
+            if (messageContent[i] == null || messageContent[i] == "")
+                i++;
+            else
+            {
+                UpdatedRegisteredAccounts = DateTime.Parse(string.Join(" ", messageContent[0..2]));
+                i += 2;
+            }
+            if (messageContent[i] == null || messageContent[i] == "")
+                i++;
+            else
+            {
+                UpdatedMessages = DateTime.Parse(string.Join(" ", messageContent[i..(i + 2)]));
+                i += 2;
+            }
+            string sender = messageContent[i];
+             _ = Task.Run(() => DeliverRegisteredAccounts(client, sender, UpdatedRegisteredAccounts));
+            if (i + 1 < messageContent.Length)
+            {
+                string receiver = messageContent[i + 1];
+                // _ = Task.Run(() => await UpdatedMessages(client, sender));
+            }
+
+            return ("RequestUpdateFromServer was successful", true);
+        }
+
+        private async Task DeliverRegisteredAccounts(ClientHandler client, string username, DateTime? UpdatedRegisteredAccountsAt)
         {
             Console.WriteLine("deliverRegisteredAccounts to client: " + client.getClientID());
             try
             {
+                if (UpdatedRegisteredAccountsAt != null && UpdatedRegisteredAccountsAt > database.getLatestAccountRegisteredAt())
+                    return;
+
                 string[] registeredAccounts = await database.GetAllOtherRegisteredAccounts(username);
                 if (registeredAccounts.Length == 0)
                 {

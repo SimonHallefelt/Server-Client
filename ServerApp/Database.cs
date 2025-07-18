@@ -7,6 +7,7 @@ namespace ServerAPP
     {
         private ConcurrentDictionary<string, string> loginInfo;
         private ConcurrentDictionary<string, LinkedList<Message>> chats;
+        private DateTime latestAccountRegisteredAt = DateTime.Now;
 
         public Database()
         {
@@ -43,7 +44,12 @@ namespace ServerAPP
         public Task<(string, bool)> RegisterAccount(string username, string password)
         {
             bool added = loginInfo.TryAdd(username, password);
-            return Task.FromResult(added ? ("User registered", true) : ("Username already taken", false));
+            if (added)
+            {
+                latestAccountRegisteredAt = DateTime.Now;
+                return Task.FromResult(("User registered", true));
+            }
+            return Task.FromResult(("Username already taken", false));
         }
 
         public Task<(string, bool)> Login(string username, string password)
@@ -77,6 +83,11 @@ namespace ServerAPP
         private string makeKey(string user1, string user2)
         {
             return (string.Compare(user1, user2) < 0 ? user1 : user2) + " " + (string.Compare(user1, user2) < 0 ? user2 : user1);
+        }
+
+        public DateTime getLatestAccountRegisteredAt()
+        {
+            return latestAccountRegisteredAt;
         }
     }
 }

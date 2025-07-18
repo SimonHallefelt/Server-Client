@@ -95,7 +95,7 @@ namespace ClientApp {
             return (versionNumber, Encoding.UTF8.GetString(buffer, 0, bytesRead));
         }
 
-        public async Task RequestUpdateFromServer(string username, string otherUser, DateTime dateTime)
+        public async Task RequestUpdateFromServer(string username, string otherUser, DateTime? UpdatedRegisteredAccounts, DateTime? UpdatedMessages)
         {
             if (username == null)
             {
@@ -103,9 +103,9 @@ namespace ClientApp {
             }
             string message;
             if (otherUser == null)
-                message = dateTime + " " + username;
+                message = UpdatedRegisteredAccounts + " " + UpdatedMessages + " " + username;
             else
-                message = dateTime + " " + username + " " + otherUser;
+                message = UpdatedRegisteredAccounts + " " + UpdatedMessages + " " + username + " " + otherUser;
             await SendToServer(message, CliMesType.RequestUpdateFromServer);
         }
     }

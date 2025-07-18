@@ -12,6 +12,8 @@ namespace ClientApp
         API api;
         MainWindow mainWindow;
         List<Message> messages = null;
+        DateTime? UpdatedRegisteredAccounts = null;
+        DateTime? UpdatedMessages = null;
 
         public HandleReceivedMessages(API api, MainWindow mainWindow)
         {
@@ -25,7 +27,7 @@ namespace ClientApp
         {
             while (true)
             {
-                await api.RequestUpdateFromServer(mainWindow.getUsername(), mainWindow.getOtherUser(), DateTime.Now);
+                await api.RequestUpdateFromServer(mainWindow.getUsername(), mainWindow.getOtherUser(), UpdatedRegisteredAccounts, UpdatedMessages);
                 await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
@@ -132,6 +134,7 @@ namespace ClientApp
                 {
                     await mainWindow.AddNewMessage(message.GetMessageContent());
                 }
+                UpdatedMessages = DateTime.Now;
                 return true;
             }
             return false;
@@ -153,8 +156,8 @@ namespace ClientApp
             {
                 await mainWindow.AddNewUser(user);
             }
-
-            return false;
+            UpdatedRegisteredAccounts = DateTime.Now;
+            return true;
         }
 
 
