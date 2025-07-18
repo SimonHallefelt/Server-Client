@@ -1,3 +1,4 @@
+using System.Net;
 using CliMesType = SharedLib.SharedLibrary.ClientMessageType;
 using SerMesType = SharedLib.SharedLibrary.ServerMessageType;
 
@@ -165,14 +166,26 @@ namespace ServerAPP
                 i += 2;
             }
             string sender = messageContent[i];
-             _ = Task.Run(() => DeliverRegisteredAccounts(client, sender, UpdatedRegisteredAccounts));
+            _ = Task.Run(() => DeliverRegisteredAccounts(client, sender, UpdatedRegisteredAccounts));
             if (i + 1 < messageContent.Length)
             {
                 string receiver = messageContent[i + 1];
-                // _ = Task.Run(() => await UpdatedMessages(client, sender));
+                _ = Task.Run(async () => await GetLatestChatLogsFor(client, sender, receiver, UpdatedMessages));
             }
 
             return ("RequestUpdateFromServer was successful", true);
+        }
+
+        private async Task GetLatestChatLogsFor(ClientHandler client, string sender, string receiver, DateTime? UpdatedMessages)
+        {
+            if (UpdatedMessages != null)
+            {
+                (string, bool) response = await database.GetNewChatLogsFor(sender, receiver, (DateTime)UpdatedMessages);
+                if (!response.Item2)
+                    return;
+                string message = response.Item2 + " " + sender + " " + receiver + " " + response.Item1;
+                await SendToClient(client, SerMesType.DeliverMessages, message);
+            }
         }
 
         private async Task DeliverRegisteredAccounts(ClientHandler client, string username, DateTime? UpdatedRegisteredAccountsAt)
@@ -189,14 +202,19 @@ namespace ServerAPP
                     Console.WriteLine("deliverRegisteredAccounts to client is empty: " + client.getClientID());
                     return;
                 }
-                string message = versionNumber + " " + SerMesType.DeliverRegisteredAccounts + " " + String.Join(" ", registeredAccounts);
-                await client.Send(message);
+                await SendToClient(client, SerMesType.DeliverRegisteredAccounts, String.Join(" ", registeredAccounts));
             }
             catch (System.Exception)
             {
                 Console.WriteLine("error: deliverRegisteredAccounts to client: " + client.getClientID());
                 return;
             }
+        }
+
+        private async Task SendToClient(ClientHandler client, SerMesType smt, string message)
+        {
+            message = versionNumber + " " + smt + " " + message;
+            await client.Send(message);
         }
     }
 

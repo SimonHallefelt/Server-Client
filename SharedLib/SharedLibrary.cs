@@ -40,6 +40,11 @@ public class SharedLibrary
             return messageContent;
         }
 
+        public DateTime GetDateTime()
+        {
+            return dateTime;
+        }
+
         public override string ToString()
         {
             return $"{sender} {dateTime} {wordCount} {messageContent}";

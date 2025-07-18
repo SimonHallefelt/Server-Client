@@ -80,6 +80,21 @@ namespace ServerAPP
             return Task.FromResult(("", false));
         }
 
+        public Task<(string, bool)> GetNewChatLogsFor(string user1, string user2, DateTime dateTime)
+        {
+            string key = makeKey(user1, user2);
+            if (chats.TryGetValue(key, out var list) && list.Last().GetDateTime() > dateTime)
+            {
+                string messagesString = "";
+                foreach (Message message in list)
+                {
+                    messagesString += message.ToString() + " ";
+                }
+                return Task.FromResult((messagesString, true));
+            }
+            return Task.FromResult(("", false));
+        }
+
         private string makeKey(string user1, string user2)
         {
             return (string.Compare(user1, user2) < 0 ? user1 : user2) + " " + (string.Compare(user1, user2) < 0 ? user2 : user1);

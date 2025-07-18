@@ -28,7 +28,7 @@ namespace ClientApp
             while (true)
             {
                 await api.RequestUpdateFromServer(mainWindow.getUsername(), mainWindow.getOtherUser(), UpdatedRegisteredAccounts, UpdatedMessages);
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(2));
             }
         }
 
@@ -120,6 +120,7 @@ namespace ClientApp
                     messages.Add(ParesMessages(messageContent[2..])[0]);
                 Message message = messages.Last();
                 await mainWindow.AddNewMessage(message.GetMessageContent());
+                UpdatedMessages = DateTime.Now;
                 return true;
             }
             return false;
