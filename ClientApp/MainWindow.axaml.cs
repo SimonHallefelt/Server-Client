@@ -135,6 +135,15 @@ namespace ClientApp {
             return Task.CompletedTask;
         }
 
+        public Task RemoveAllMessages()
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                MessageContainer.Children.Clear();
+            });
+            return Task.CompletedTask;
+        }
+
         public string getUsername()
         {
             return username;

@@ -131,6 +131,7 @@ namespace ClientApp
             if (messageContent[0] == "True" && messageContent[1] == mainWindow.getUsername() && messageContent[2] == mainWindow.getOtherUser())
             {
                 this.messages = ParesMessages(messageContent[3..]);
+                await mainWindow.RemoveAllMessages();
                 foreach (var message in messages)
                 {
                     await mainWindow.AddNewMessage(message.GetMessageContent());
